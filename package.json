@@ -1,0 +1,41 @@
+{
+  "name": "escritorio-de-novelas",
+  "version": "1.0.0",
+  "description": "App para escribir novelas: manuscrito, fichas, mapa, línea de tiempo y metas.",
+  "author": "Lucas Nascimento",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "electron/main.js",
+  "scripts": {
+    "build": "node build.js",
+    "windows": "node build.js && electron-builder --win nsis --publish never",
+    "start": "node build.js && electron ."
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/app": "^6.0.2",
+    "@capacitor/clipboard": "^6.0.2",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/filesystem": "^6.0.3",
+    "@capacitor/share": "^6.0.3",
+    "@capacitor-community/text-to-speech": "^4.1.0",
+    "@fontsource/inter": "^5.1.0",
+    "@fontsource/literata": "^5.1.0",
+    "jspdf": "2.5.1",
+    "jszip": "3.10.1"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^6.2.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "ar.lucasnascimento.escritorio",
+    "productName": "Escritorio de novelas",
+    "files": ["www/**", "electron/**", "package.json"],
+    "directories": { "output": "dist" },
+    "win": { "target": "nsis", "icon": "build/icon.png" },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "shortcutName": "Escritorio de novelas" }
+  }
+}

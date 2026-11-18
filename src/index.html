@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escritorio de novelas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body data-view="ms">
+<div class="app">
+<header>
+  <button id="bLib" title="Tus novelas y cuentos">Biblioteca</button>
+  <input id="ptitle" aria-label="Título del proyecto">
+  <div class="seg" id="views"><button data-v="ms" class="on">Manuscrito</button><button data-v="board">Tablero</button><button data-v="cards">Fichas</button><button data-v="map">Mapa</button><button data-v="time">Línea de tiempo</button></div>
+  <button class="mob" id="bIdx">Índice</button>
+  <button class="today" id="bGoals" title="Metas: palabras de hoy"><span id="tNum">0 / 1.000</span><span class="tbar"><i id="tBar"></i></span></button>
+  <span class="stat" id="saveSt">Cargando…</span>
+  <span id="busy" class="busy" hidden><i class="spin"></i><span id="busyT"></span></span>
+  <button class="pom" id="bPom" data-pom title="Pomodoro"></button>
+  <button id="bTheme" title="Tema claro u oscuro">Tema: auto</button>
+  <button id="bFocus">Foco</button>
+  <button id="bSave" class="pri" title="Guardar (Ctrl+S)">Guardar</button>
+  <button id="bExp">Exportar</button>
+  <button class="mob" id="bNotes">Notas</button>
+</header>
+<main>
+  <nav id="binder" aria-label="Capítulos y escenas"></nav>
+
+  <section id="sheet" class="view">
+    <div class="page">
+      <input id="stitle" aria-label="Título de la escena">
+      <div class="meta">
+        <span id="schap"></span>
+        <select id="sstat" aria-label="Estado"><option value="idea">Idea</option><option value="borrador">Borrador</option><option value="revision">Revisión</option><option value="lista">Lista</option></select>
+        <input id="spov" placeholder="Punto de vista" aria-label="Punto de vista">
+        <button class="ib" id="sUp" title="Subir escena">↑</button>
+        <button class="ib" id="sDn" title="Bajar escena">↓</button>
+        <button class="ib" id="sDel" title="Borrar escena">✕</button>
+      </div>
+      <div class="tools" id="etools">
+        <button data-cmd="bold" title="Negrita (Ctrl+B)"><b>N</b></button>
+        <button data-cmd="italic" title="Cursiva (Ctrl+I)"><i>C</i></button>
+        <span class="sep"></span>
+        <button id="bDict" hidden>Dictar</button>
+        <button id="bTts" hidden>Escuchar</button>
+        <button id="bVer" title="Guardar una versión de esta escena">Guardar versión</button>
+        <span id="partial"></span>
+      </div>
+      <div id="txt" class="ed" contenteditable="true" spellcheck="true" data-ph="Empezá a escribir…"></div>
+    </div>
+    <div class="foot"><span><b id="wS">0</b> <span id="lS">en la escena</span></span><span id="fC"><b id="wC">0</b> en el capítulo</span><span><b id="wT">0</b> en total</span></div>
+  </section>
+
+  <section id="boardv" class="view" aria-label="Tablero">
+    <div class="vtool">
+      <div class="chips" id="bStat"></div>
+      <select id="bPov" aria-label="Filtrar por punto de vista"></select>
+    </div>
+    <div id="board"></div>
+  </section>
+
+  <section id="cardv" class="view" aria-label="Fichas">
+    <div class="vtool">
+      <button class="pri" id="cAdd">+ Ficha</button>
+      <div class="chips" id="cKinds"></div>
+      <label class="chk" style="margin:0"><input type="checkbox" id="cCo" checked> Quién aparece con quién</label>
+      <button id="cLay">Ordenar</button>
+      <button id="cAI" hidden>Detectar con Claude</button>
+      <button id="cUndoB">Deshacer</button>
+    </div>
+    <div class="mwrap">
+      <svg id="csvg" tabindex="0" role="img" aria-label="Mapa de fichas"></svg>
+      <div class="mempty" id="cempty" hidden>Todavía no hay fichas. Mirá las sugerencias del texto a la derecha, o hacé doble clic para crear una.</div>
+      <div class="zoom"><button id="czOut" title="Alejar">−</button><button id="czIn" title="Acercar">+</button><button id="czFit">Ajustar</button></div>
+      <div class="insp" id="cinsp"></div>
+    </div>
+  </section>
+
+  <section id="mapv" class="view" aria-label="Mapa">
+    <div class="vtool">
+      <select id="mSel" aria-label="Elegir mapa"></select>
+      <button id="mNew">+ Mapa</button>
+      <button id="mGen">Generar desde la obra</button>
+      <button id="mLay">Ordenar</button>
+      <button id="mUndo">Deshacer</button>
+      <button id="mSvg">Exportar SVG</button>
+      <button class="ib bord" id="mDel" title="Borrar este mapa">✕</button>
+    </div>
+    <div class="mwrap">
+      <svg id="msvg" tabindex="0" role="img" aria-label="Mapa mental y diagrama"></svg>
+      <div class="mempty" id="mempty" hidden>Doble clic (o doble toque) en cualquier lugar para crear la primera idea.</div>
+      <div class="zoom"><button id="zOut" title="Alejar">−</button><button id="zIn" title="Acercar">+</button><button id="zFit">Ajustar</button></div>
+      <div class="insp" id="insp"></div>
+    </div>
+  </section>
+
+  <section id="timev" class="view" aria-label="Línea de tiempo">
+    <div class="vtool">
+      <button class="pri" id="tLine">+ Línea</button>
+      <button id="tAdd">+ Hecho</button>
+      <button id="tBook" title="Volver a ordenar las estaciones como el libro">Orden del libro</button>
+      <button id="tUndo">Deshacer</button>
+      <label class="chk" style="margin:0"><input type="checkbox" id="tOrder"> Marcar saltos atrás</label>
+      <span class="note" id="tInfo" style="margin:0"></span>
+    </div>
+    <div class="mwrap tlw">
+      <svg id="tsvg" tabindex="0" role="img" aria-label="Línea de tiempo"></svg>
+      <div class="mempty" id="tempty" hidden>Agregá una línea por personaje con "+ Línea".</div>
+      <div class="zoom"><button id="tzOut" title="Alejar">−</button><button id="tzIn" title="Acercar">+</button><button id="tzFit">Ajustar</button></div>
+      <div class="insp" id="tinsp"></div>
+    </div>
+  </section>
+
+  <aside id="panel">
+    <div class="tabs"><button data-t="esc" class="on" id="tabEsc">Escena</button><button data-t="fic">Fichas</button><button data-t="bus">Buscar</button></div>
+    <div class="pane on" id="p-esc">
+      <label for="syn">Sinopsis</label><textarea id="syn" rows="4" placeholder="Qué pasa, qué cambia"></textarea>
+      <label for="nts">Notas</label><textarea id="nts" rows="5" placeholder="Ideas sueltas, dudas, cosas para revisar"></textarea>
+      <h4>Aparecen</h4><div id="appear" class="chips"></div>
+      <h4>Versiones</h4><div id="vers"></div>
+      <section id="revBox" hidden>
+        <h4>Crítica de Claude</h4>
+        <div class="two"><select id="revFocus" aria-label="Foco de la crítica">
+          <option value="general">Lectura general</option><option value="ritmo">Ritmo y tensión</option><option value="dialogos">Diálogos</option><option value="continuidad">Personajes y continuidad</option><option value="estilo">Estilo y prosa</option><option value="historia">Verosimilitud histórica</option>
+        </select><button id="revGo" class="pri">Pedir crítica</button></div>
+        <div id="revOut"></div>
+      </section>
+      <button class="mob" id="closeP" style="margin-top:14px">Cerrar</button>
+    </div>
+    <div class="pane" id="p-fic">
+      <div class="chips" id="fk"></div>
+      <input id="fq" placeholder="Buscar ficha" aria-label="Buscar ficha" style="margin-bottom:10px">
+      <div id="cards"></div>
+      <button id="addCard" style="width:100%">+ Nueva ficha</button>
+    </div>
+    <div class="pane" id="p-bus">
+      <label for="sq">Buscar en toda la obra</label><input id="sq" placeholder="Palabra o frase" autocomplete="off">
+      <label for="sr">Reemplazar por</label><input id="sr" placeholder="(opcional)" autocomplete="off">
+      <label class="chk"><input type="checkbox" id="sCase"> Distinguir mayúsculas</label>
+      <label class="chk"><input type="checkbox" id="sWord"> Palabra completa</label>
+      <div class="two" style="margin-top:12px"><button id="sRep">Reemplazar todo</button><button id="sUndo" disabled>Deshacer reemplazo</button></div>
+      <div id="sRes"></div>
+    </div>
+  </aside>
+</main>
+</div>
+<div id="pomPop" hidden></div>
+<div id="fbar"><button data-fcmd="bold" title="Negrita (Ctrl+B)"><b>N</b></button><button data-fcmd="italic" title="Cursiva (Ctrl+I)"><i>C</i></button><button class="pom" id="fPom" data-pom title="Pomodoro"></button><button id="fOut" class="pri">Salir del foco</button></div>
+
+<dialog id="dLib">
+  <h2>Biblioteca</h2>
+  <p>Tus novelas y cuentos. Se guardan en tu cuenta y, cuando tocás Guardar, en tu Drive.</p>
+  <div id="libList"></div>
+  <div class="row"><button id="libSample">+ Novela de ejemplo</button><button id="libCuento">+ Cuento</button><button class="pri" id="libNovela">+ Novela</button><button id="libClose">Cerrar</button></div>
+</dialog>
+
+<dialog id="dExp">
+  <h2>Exportar</h2>
+  <p>Elegí qué parte y en qué formato.</p>
+  <div class="chips" id="scope"><button data-v="all" class="on">Obra completa</button><button data-v="chap">Capítulo actual</button></div>
+  <div class="grid2" id="fmts">
+    <button data-f="docx">Word<small>.docx para editar</small></button>
+    <button data-f="pdf">PDF<small>para leer o imprimir</small></button>
+    <button data-f="md">Markdown<small>.md</small></button>
+    <button data-f="txt">Texto plano<small>.txt</small></button>
+    <button data-f="json">Respaldo<small>todo el proyecto .json</small></button>
+    <button data-f="copy">Copiar texto<small>al portapapeles</small></button>
+  </div>
+  <label for="imp">Abrir un respaldo .json</label><input type="file" id="imp" accept=".json,application/json">
+  <div id="abk" hidden>
+    <label>Copia de seguridad</label>
+    <p class="note" id="abkInfo" style="margin-top:0"></p>
+    <div class="grid2"><button id="abkFolder">Elegir carpeta de respaldo<small id="abkPath">por ejemplo, tu carpeta de Google Drive</small></button><button id="abkShare">Enviar respaldo<small>a Drive, mail o WhatsApp</small></button></div>
+  </div>
+  <div id="gd">
+    <label>Google Drive</label>
+    <div id="gState" class="note" style="margin-top:0"></div>
+    <div class="grid2"><button id="gSave">Guardar copia en Drive<small id="gLast">en Escritura</small></button><button id="gList">Abrir desde Drive<small>cualquier novela o copia anterior</small></button></div>
+    <label class="chk"><input type="checkbox" id="gDoc" checked> Incluir el manuscrito como Google Doc</label>
+    <label class="chk"><input type="checkbox" id="gAuto"> Copia automática cada 30 minutos si hubo cambios</label>
+    <button id="gTest" style="margin-top:10px">Probar conexión con Drive</button>
+    <div id="gRes" class="note"></div>
+  </div>
+  <div class="note" id="expMsg"></div>
+  <div class="row"><button id="xClose">Cerrar</button></div>
+</dialog>
+
+<dialog id="dVer">
+  <h2 id="verT">Versión</h2>
+  <p id="verS"></p>
+  <div id="verBody" class="verbody"></div>
+  <div class="row"><button id="verDel">Borrar versión</button><button id="verClose">Cerrar</button><button class="pri" id="verRes">Restaurar esta versión</button></div>
+</dialog>
+
+<dialog id="dGoals">
+  <h2>Metas</h2>
+  <div id="p-met"></div>
+  <div class="row"><button id="goalsClose">Cerrar</button></div>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="js/platform.js"></script>
+<script src="js/core.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/views.js"></script>
+<script src="js/map.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/io.js"></script>
+<script src="js/pom.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

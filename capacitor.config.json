@@ -1,0 +1,6 @@
+{
+  "appId": "ar.lucasnascimento.escritorio",
+  "appName": "Escritorio de novelas",
+  "webDir": "www",
+  "android": { "allowMixedContent": false }
+}
