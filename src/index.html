@@ -136,7 +136,8 @@
       <button id="addCard" style="width:100%">+ Nueva ficha</button>
     </div>
     <div class="pane" id="p-bus">
-      <label for="sq">Buscar en toda la obra</label><input id="sq" placeholder="Palabra o frase" autocomplete="off">
+      <div class="chips" id="sScope"><button data-s="all" class="on">Toda la obra</button><button data-s="cur">Este capítulo</button></div>
+      <label for="sq">Buscar</label><input id="sq" placeholder="Palabra o frase" autocomplete="off">
       <label for="sr">Reemplazar por</label><input id="sr" placeholder="(opcional)" autocomplete="off">
       <label class="chk"><input type="checkbox" id="sCase"> Distinguir mayúsculas</label>
       <label class="chk"><input type="checkbox" id="sWord"> Palabra completa</label>

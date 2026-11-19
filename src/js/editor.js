@@ -150,12 +150,14 @@ function renderGoals(){
 $('#p-met').addEventListener('change',e=>{if(e.target.id==='gD')P.goal.daily=Math.max(50,+e.target.value||1000);if(e.target.id==='gT')P.goal.total=Math.max(500,+e.target.value||80000);touch();renderGoals();counts()});
 
 /* ---------- search & replace ---------- */
-let sUndo=null;
+let sUndo=null,sScope='all';
+const sScenes=()=>{if(sScope==='all')return allScenes();const k=cur();return k?(P.simple?[{c:k.c,s:k.s}]:k.c.scenes.map(s=>({c:k.c,s}))):[]};
+$('#sScope').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;sScope=b.dataset.s;$$('#sScope button').forEach(x=>x.classList.toggle('on',x===b));renderSearch()});
 function sRe(){const q=$('#sq').value;if(!q)return null;const pat=$('#sWord').checked?'(?<![\\p{L}\\p{N}])'+escRe(q)+'(?![\\p{L}\\p{N}])':escRe(q);return new RegExp(pat,'gu'+($('#sCase').checked?'':'i'))}
 function renderSearch(){
-  const re=sRe(),el=$('#sRes');if(!re){el.innerHTML='<p class="note">Buscá en todo el texto de esta obra. Ctrl+F te trae acá.</p>';return}
+  const re=sRe(),el=$('#sRes');if(!re){el.innerHTML='<p class="note">'+(sScope==='all'?'Busca en todos los capítulos de la obra.':'Busca solo en el capítulo abierto.')+' Ctrl+F te trae acá.</p>';return}
   let tot=0,n=0;const out=[];
-  for(const {c,s} of allScenes()){const txt=plainOf(T[s.id]);const ms=[...txt.matchAll(re)];if(!ms.length)continue;tot+=ms.length;n++;
+  for(const {c,s} of sScenes()){const txt=plainOf(T[s.id]);const ms=[...txt.matchAll(re)];if(!ms.length)continue;tot+=ms.length;n++;
     const snip=ms.slice(0,2).map(m=>{const a=Math.max(0,m.index-40),b=Math.min(txt.length,m.index+m[0].length+40);return(a?'…':'')+esc(txt.slice(a,m.index))+'<mark>'+esc(m[0])+'</mark>'+esc(txt.slice(m.index+m[0].length,b))+(b<txt.length?'…':'')}).join('<br>');
     out.push(`<button data-go="${s.id}"><small>${esc(whereOf(c,s))} · ${ms.length}</small>${snip}</button>`)}
   el.innerHTML=`<p class="note">${tot?fmt(tot)+' coincidencia'+(tot>1?'s':'')+' en '+n+' '+(n>1?U().many:U().one):'Sin coincidencias.'}</p><div class="sres">${out.join('')}</div>`;
@@ -165,10 +167,10 @@ $('#sRes').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if
 function findInEd(re){if(!re)return;const w=document.createTreeWalker(ed,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode()){re.lastIndex=0;const m=re.exec(n.nodeValue);if(m){const r=document.createRange();r.setStart(n,m.index);r.setEnd(n,m.index+m[0].length);ed.focus();const s=getSelection();s.removeAllRanges();s.addRange(r);n.parentElement.scrollIntoView({block:'center'});return}}}
 function replaceInHTML(h,re,rep){tpl.innerHTML=h;let c=0;const w=document.createTreeWalker(tpl.content,NodeFilter.SHOW_TEXT);const ns=[];let n;while(n=w.nextNode())ns.push(n);for(const x of ns){re.lastIndex=0;const v=x.nodeValue.replace(re,()=>{c++;return rep});if(c)x.nodeValue=v}return{h:tpl.innerHTML,c}}
 $('#sRep').onclick=e=>{const re=sRe();if(!re)return;const rep=$('#sr').value,btn=e.currentTarget;if(btn.dataset.busy)return;
-  let n=0;for(const {s} of allScenes())n+=(plainOf(T[s.id]).match(re)||[]).length;
+  let n=0;for(const {s} of sScenes())n+=(plainOf(T[s.id]).match(re)||[]).length;
   if(!n){$('#sRes').insertAdjacentHTML('afterbegin','<p class="note">No hay nada para reemplazar.</p>');return}
   confirm2(btn,()=>busy(btn,'Reemplazando…',async()=>{const old={};let tot=0;
-    for(const {s} of allScenes()){const r=replaceInHTML(T[s.id]||'',re,rep);if(r.c){old[s.id]=T[s.id];snap(s.id,'Antes de reemplazar «'+$('#sq').value+'»',true);T[s.id]=r.h;tot+=r.c;touch(s.id)}}
+    for(const {s} of sScenes()){const r=replaceInHTML(T[s.id]||'',re,rep);if(r.c){old[s.id]=T[s.id];snap(s.id,'Antes de reemplazar «'+$('#sq').value+'»',true);T[s.id]=r.h;tot+=r.c;touch(s.id)}}
     sUndo=Object.keys(old).length?old:null;$('#sUndo').disabled=!sUndo;renderEditor(true);renderBinder();renderSearch();
     $('#sRes').insertAdjacentHTML('afterbegin',`<p class="note">Reemplacé ${fmt(tot)} coincidencia${tot===1?'':'s'}.</p>`)}),'Confirmar ('+n+')');
 };
