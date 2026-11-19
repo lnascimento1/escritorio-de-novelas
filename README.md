@@ -2,6 +2,10 @@
 
 App para escribir novelas y cuentos: manuscrito por capítulos, fichas como mapa, mapa de ideas, línea de tiempo tipo metro, tablero, metas y pomodoro.
 
+## Usarla desde el navegador (sin instalar nada)
+
+Abrí **https://lnascimento1.github.io/escritorio-de-novelas/** en Chrome o Edge y tocá el ícono de *Instalar* en la barra de direcciones. Queda como una app, con su ícono, y funciona sin internet. Sirve en compus corporativas donde no se pueden instalar programas.
+
 ## Descargar
 
 Cada cambio en `main` fabrica una versión nueva. Las descargas están en **Releases** (columna derecha de esta página):

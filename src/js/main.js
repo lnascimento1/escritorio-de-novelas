@@ -72,7 +72,8 @@ async function bootRemote(){
   bootLocal();
   if(L.theme&&L.theme!==themePref)themePref=L.theme;applyTheme();
   if(IS_APP){TTS=makeTTS();if(TTS)hookVoice('t');$('#revBox').hidden=false;$('#revGo').textContent='Copiar pedido';renderReviews();
-    if(window.Capacitor&&CAP&&CAP.App)CAP.App.addListener('pause',()=>flush());}
+    if(window.Capacitor&&CAP&&CAP.App)CAP.App.addListener('pause',()=>flush());
+    if(IS_WEBAPP&&'serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('sw.js').catch(()=>{});let had=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)status('Hay una versión nueva: cerrá y volvé a abrir la app');had=true})}}
   if(window.claude&&claude.use){
     claude.use('downloads').then(d=>{dl=d}).catch(()=>{});
     claude.use('mcp').then(m=>{mcpx=m;mcpState=m?'ok':'null';if($('#dExp').open)gUI()}).catch(e=>{mcpState=(e&&e.code)||'error'});

@@ -4,6 +4,14 @@ const IS_APP=!!window.ESCRITORIO_APP;
 const CAP=(window.Capacitor&&window.Capacitor.Plugins)||null;
 const IS_ANDROID=!!(window.Capacitor&&window.Capacitor.getPlatform&&window.Capacitor.getPlatform()==='android');
 const ELEC=window.electronAPI||null;
+const IS_WEBAPP=IS_APP&&!ELEC&&!window.Capacitor;
+/* installed web app: backup folder chosen with the browser's folder picker (Chrome/Edge), handle kept in IndexedDB */
+const FSA={h:null,
+  ok:()=>IS_WEBAPP&&typeof window.showDirectoryPicker==='function',
+  async load(){if(this.h||!IDB.db)return this.h;try{this.h=await new Promise(r=>{const q=IDB.db.transaction('kv').objectStore('kv').get('__dir');q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null)})}catch(e){}return this.h},
+  async choose(){const h=await window.showDirectoryPicker({id:'escritorio',mode:'readwrite'});this.h=h;if(IDB.db)IDB.db.transaction('kv','readwrite').objectStore('kv').put(h,'__dir');return h.name},
+  async perm(ask){const h=await this.load();if(!h)return false;let p=await h.queryPermission({mode:'readwrite'});if(p!=='granted'&&ask)p=await h.requestPermission({mode:'readwrite'});return p==='granted'},
+  async write(rel,bytes){const h=this.h;const parts=rel.split('/');let d=h;for(const p of parts.slice(0,-1))d=await d.getDirectoryHandle(p,{create:true});const f=await d.getFileHandle(parts[parts.length-1],{create:true});const w=await f.createWritable();await w.write(bytes);await w.close()}};
 /* IndexedDB mirror of the key/value store, so long novels are not limited by localStorage */
 const IDB={db:null,
   open(){return new Promise(res=>{try{const r=indexedDB.open('escritorio-novelas',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>{this.db=r.result;res(true)};r.onerror=()=>res(false);setTimeout(()=>res(false),4000)}catch(e){res(false)}})},
@@ -34,9 +42,10 @@ function makeTTS(){
     async speak(lines){stop=false;set('speaking');for(let i=0;i<lines.length;i++){if(stop)return;emit('line',{line:i,id:lines[i].id});await one(lines[i].text)}if(!stop)set('idle','completed')}};
 }
 /* automatic backup folder (Windows): pick your Google Drive folder and every Guardar writes there */
-async function appBackup(){
-  if(!ELEC||!ELEC.writeBackup)return null;const folder=await ELEC.getFolder();if(!folder)return null;
-  const base=(P.title||'Obra').replace(/[\\/:*?"<>|]/g,'').trim().slice(0,80)||'Obra',d=today();
-  const bytes=new TextEncoder().encode(backup());
-  await ELEC.writeBackup(base+'.json',bytes);await ELEC.writeBackup('Respaldos/'+base+' - '+d+'.json',bytes);return folder;
+async function appBackup(ask){
+  const base=(P.title||'Obra').replace(/[\\/:*?"<>|]/g,'').trim().slice(0,80)||'Obra',d=today(),bytes=new TextEncoder().encode(backup());
+  if(ELEC&&ELEC.writeBackup){const folder=await ELEC.getFolder();if(!folder)return null;await ELEC.writeBackup(base+'.json',bytes);await ELEC.writeBackup('Respaldos/'+base+' - '+d+'.json',bytes);return folder}
+  if(FSA.ok()&&await FSA.perm(ask)){await FSA.write(base+'.json',bytes);await FSA.write('Respaldos/'+base+' - '+d+'.json',bytes);return FSA.h.name}
+  return null;
 }
+const hasFolderPicker=()=>!!(ELEC||FSA.ok());
