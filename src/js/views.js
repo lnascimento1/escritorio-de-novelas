@@ -158,7 +158,7 @@ function renderLib(){
   const list=L.list.slice().sort((a,b)=>(b.updated||0)-(a.updated||0));
   $('#libList').innerHTML='<div class="lib">'+list.map(x=>`<div class="li ${x.id===P.id?'cur':''}" data-id="${x.id}"><div><b>${esc(x.title||'Sin título')}</b><small>${x.type==='cuento'?'Cuento':'Novela'} · ${fmt(x.words)} palabras${x.updated?' · editado '+new Date(x.updated).toLocaleDateString('es-AR'):''}${x.id===P.id?' · abierto':''}</small></div>${x.id===P.id?'':`<button data-a="open">Abrir</button>`}<button class="ib bord" data-a="del" title="Borrar">✕</button></div>`).join('')+'</div>';
 }
-$('#bLib').onclick=()=>{syncLib();renderLib();$('#dLib').showModal()};
+$('#bLib').onclick=()=>{syncLib();renderLib();$('#dLib').showModal();if(typeof gsLibrary==='function')gsLibrary(false).then(renderLib)};
 $('#libClose').onclick=()=>$('#dLib').close();
 $('#libList').addEventListener('click',async e=>{const b=e.target.closest('[data-a]');if(!b)return;const id=b.closest('.li').dataset.id;
   if(b.dataset.a==='open'){$('#dLib').close();await openProject(id)}

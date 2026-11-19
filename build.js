@@ -12,7 +12,7 @@ h=h.replace(/<link rel="preconnect"[^>]*>\n?/,'').replace(/<link href="https:\/\
 const css=fs.readFileSync(S('app.css'),'utf8');h=h.replace('<link rel="stylesheet" href="app.css">',()=>'<style>\n'+ff+css+'\n</style>');
 h=h.replace('<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>','<script src="lib/jszip.min.js"></script>');
 h=h.replace('<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>','<script src="lib/jspdf.umd.min.js"></script>');
-const order=['platform.js','core.js','editor.js','views.js','map.js','cards.js','io.js','pom.js','main.js'];
+const order=['platform.js','core.js','editor.js','views.js','map.js','cards.js','io.js','gsync.js','pom.js','main.js'];
 h=h.replace(/<script src="js\/[^"]+"><\/script>\n?/g,'');
 const js=order.map(f=>fs.readFileSync(S('js/'+f),'utf8').replace("'use strict';\n",'')).join('\n');h=h.replace('</body>',()=>'<script>window.ESCRITORIO_APP=true</script>\n<script>\n'+js+'\n</script>\n</body>');
 h=h.replace('<meta name="viewport" content="width=device-width, initial-scale=1">','<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">');

@@ -53,7 +53,7 @@ async function doExport(f){
 async function importData(o){if(!o||!o.P||!o.T||!Array.isArray(o.P.chapters))throw{code:'bad'};const d={P:o.P,T:o.T,H:o.H||{}};d.P.id=d.P.id||nid();delete d.P.sample;await openProject(d.P.id,d)}
 $('#bExp').onclick=()=>{$('#expMsg').textContent='';if(IS_APP)abkUI();else gUI();$('#dExp').showModal()};
 /* app backups: Windows writes to a chosen folder (your Google Drive folder works), Android sends the file wherever you pick */
-async function abkUI(){$('#gd').hidden=true;$('#abk').hidden=false;if(IS_WEBAPP)$('#abkShare').innerHTML='Descargar respaldo<small>un archivo .json</small>';$('#abkFolder').hidden=!hasFolderPicker();
+async function abkUI(){$('#gd').hidden=true;$('#abk').hidden=false;gsUI();if(IS_WEBAPP)$('#abkShare').innerHTML='Descargar respaldo<small>un archivo .json</small>';$('#abkFolder').hidden=!hasFolderPicker();
   if(hasFolderPicker()){const f=ELEC?await ELEC.getFolder():(await FSA.load())&&FSA.h.name;$('#abkPath').textContent=f||'por ejemplo, tu carpeta de Google Drive';$('#abkInfo').textContent=f?'Cada vez que tocás Guardar, se escribe una copia en esa carpeta y una por día en Respaldos.':'Elegí una carpeta y cada Guardar va a dejar ahí una copia. Si usás Google Drive para escritorio, elegí tu carpeta de Drive y se sube sola.'}
   else $('#abkInfo').textContent='Tu obra se guarda en el teléfono. Para tener copia en Google Drive, tocá "Enviar respaldo" y elegí Drive.'}
 $('#abkFolder').onclick=e=>busy(e.currentTarget,'Eligiendo carpeta…',async()=>{let f=null;try{f=ELEC?await ELEC.chooseFolder():await FSA.choose()}catch(err){}if(f){await appBackup(true);abkUI();$('#expMsg').textContent='Listo: ya guardé una copia en '+f}});
@@ -140,6 +140,7 @@ $('#gTest').onclick=e=>busy(e.currentTarget,'Probando Drive…',async()=>{
 async function saveNow(){
   const b=$('#bSave');if(b.disabled)return;
   if(IS_APP){b.disabled=true;busyOn('Guardando…');try{const k=cur();if(k)autoSnap(k.s.id);await flush();const f=await appBackup(true).catch(()=>null);
+    if(gsOn()){await gsSync(true);return}
     status(f?'Guardado en tu carpeta de respaldo '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}):savedLabel()+(hasFolderPicker()?' · elegí una carpeta de respaldo en Exportar':''))}finally{busyOff();b.disabled=false}return}
   b.disabled=true;b.textContent='Guardando…';busyOn('Guardando…');try{
   const k=cur();if(k)autoSnap(k.s.id);

@@ -152,15 +152,16 @@ async function uploadProject(d){const pc=projCol(d.P.id);
   for(const k of Object.keys(d.H||{}))await pc.doc('h-'+k).set({j:JSON.stringify(d.H[k])});
   await pc.doc('meta').set({j:JSON.stringify(d.P)})}
 function localData(id){const l=lsGet(LSP(id));return l&&l.P?{P:l.P,T:l.T||{},H:lsGet(LSH(id))||{}}:null}
-async function openProject(id,data){busyOn('Abriendo…');await paint();try{await openProject_(id,data)}finally{busyOff()}}
+async function openProject(id,data){busyOn('Abriendo…');await paint();try{await openProject_(id,data)}finally{busyOff()}if(typeof gsOn==='function'&&gsOn()&&gsHasTok())gsSync(false)}
 async function openProject_(id,data){
   if(P)await flush();
   let d=data||localData(id),push=false;
+  if(!d&&typeof gsFetchProject==='function')d=await gsFetchProject(id);
   if(!data&&DB){try{const r=await loadRemote(id);if(r&&(!d||(r.P.updated||0)>=(d.P.updated||0)))d=r;else if(d)push=true}catch(e){}}
   if(!d){d=newProject('novela');push=true}
   setData(d);if(typeof mapReset==='function')mapReset();if(DB)C=projCol(P.id);if(push||data)markAllDirty();
   syncLib();renderAll();if(typeof setView==='function')setView(document.body.dataset.view||'ms');
-  touch();
+  const insync=P.gsync&&+(P.gsync.base||0)>=+(P.updated||0);touch();if(insync)P.gsync.base=P.updated;
 }
 async function deleteProject(id){
   L.list=L.list.filter(x=>x.id!==id);dirtyLib=true;lsDel(LSP(id));lsDel(LSH(id));

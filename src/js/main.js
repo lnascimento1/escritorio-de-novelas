@@ -71,6 +71,7 @@ async function bootRemote(){
   await IDB.open();const all=await IDB.all();for(const k of Object.keys(all))if(typeof all[k]==='string')MEM.set(k,all[k]);
   bootLocal();
   if(L.theme&&L.theme!==themePref)themePref=L.theme;applyTheme();
+  if(gsOn())status('Drive: tocá Guardar para traer lo último');
   if(IS_APP){TTS=makeTTS();if(TTS)hookVoice('t');$('#revBox').hidden=false;$('#revGo').textContent='Copiar pedido';renderReviews();
     if(window.Capacitor&&CAP&&CAP.App)CAP.App.addListener('pause',()=>flush());
     if(IS_WEBAPP&&'serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('sw.js').catch(()=>{});let had=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)status('Hay una versión nueva: cerrá y volvé a abrir la app');had=true})}}

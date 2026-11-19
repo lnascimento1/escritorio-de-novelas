@@ -172,6 +172,10 @@
   <div id="abk" hidden>
     <label>Copia de seguridad</label>
     <p class="note" id="abkInfo" style="margin-top:0"></p>
+    <div id="gsBox" hidden style="margin-bottom:14px">
+      <p class="note" id="gsInfo" style="margin-top:0"></p>
+      <div class="row" style="justify-content:flex-start;margin-top:6px"><button class="pri" id="gsConnect">Conectar con Google Drive</button><button id="gsNow" hidden>Sincronizar ahora</button><button id="gsOff" hidden>Desconectar</button></div>
+    </div>
     <div class="grid2"><button id="abkFolder">Elegir carpeta de respaldo<small id="abkPath">por ejemplo, tu carpeta de Google Drive</small></button><button id="abkShare">Enviar respaldo<small>a Drive, mail o WhatsApp</small></button></div>
   </div>
   <div id="gd">
@@ -194,6 +198,11 @@
   <div class="row"><button id="verDel">Borrar versión</button><button id="verClose">Cerrar</button><button class="pri" id="verRes">Restaurar esta versión</button></div>
 </dialog>
 
+<dialog id="dSync">
+  <h2>Hay dos versiones</h2>
+  <p id="syncMsg"></p>
+  <div class="row"><button id="syncLocal">Quedarme con la de acá</button><button class="pri" id="syncDrive">Usar la de Drive</button></div>
+</dialog>
 <dialog id="dGoals">
   <h2>Metas</h2>
   <div id="p-met"></div>
@@ -209,6 +218,7 @@
 <script src="js/map.js"></script>
 <script src="js/cards.js"></script>
 <script src="js/io.js"></script>
+<script src="js/gsync.js"></script>
 <script src="js/pom.js"></script>
 <script src="js/main.js"></script>
 </body>
