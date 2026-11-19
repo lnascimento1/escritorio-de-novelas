@@ -1,6 +1,6 @@
 'use strict';
 /* ---------- Google Drive sync (web/installed version): each work lives in Escritura/<obra>/ and follows you across devices ---------- */
-const GCLIENT='';
+const GCLIENT='471807213057-faq4329spp81fjq7kmqspch983gnc7aa.apps.googleusercontent.com';
 const GS={tok:null,exp:0,busy:false,last:0,pending:null};
 const gsOk=()=>IS_WEBAPP&&!!GCLIENT;
 const gsOn=()=>gsOk()&&!!(L.gsync&&L.gsync.on);
