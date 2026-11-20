@@ -57,7 +57,7 @@ function renderEditor(force){
   $('#tabEsc').textContent=U().One;$('#lS').textContent='en '+(P.simple?'el capítulo':'la escena');$('#fC').hidden=P.simple;
   if(force||edScene!==k.s.id){ed.innerHTML=T[k.s.id]||'';edScene=k.s.id;lastRange=null}
   $('#syn').value=k.s.syn||'';$('#nts').value=k.s.notes||'';
-  renderAppear();renderVers();renderReviews();counts();
+  renderAppear();renderVers();renderReviews();counts();if(typeof navSync==='function')navSync();
 }
 function counts(){
   const k=cur();const td=Math.max(0,P.log[today()]||0),g=P.goal.daily||1;

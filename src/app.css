@@ -36,8 +36,8 @@ header{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1p
 .seg{display:flex;border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px;overflow-x:auto}
 .seg button{border:0;min-height:34px;padding:4px 11px;border-radius:7px;background:none;color:var(--mut);white-space:nowrap;flex:none}
 .seg button.on{background:var(--ink);color:var(--bg);font-weight:600}
-main{display:grid;grid-template-columns:260px minmax(0,1fr) 330px;min-height:0}
-body:not([data-view=ms]) main{grid-template-columns:260px minmax(0,1fr)}
+main{--bw:260px;--pw:330px;display:grid;grid-template-columns:var(--bw) minmax(0,1fr) var(--pw);min-height:0;transition:grid-template-columns .18s ease}
+body:not([data-view=ms]) main{grid-template-columns:var(--bw) minmax(0,1fr)}
 body:not([data-view=ms]) #panel{display:none}
 .view{display:none;min-height:0}
 body[data-view=ms] #sheet{display:block}
@@ -269,12 +269,19 @@ body.focus #fbar [data-fcmd].on{background:var(--ink);color:var(--bg)}
 @media(prefers-reduced-motion:reduce){.pom.ding{animation:none;background:var(--accs)}}
 @media(max-width:600px){.page{padding:32px 20px 80px;border-radius:0;box-shadow:none}#sheet{padding:0 0 100px}}
 
-button.tog{min-width:40px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center;color:var(--mut)}
-button.tog:hover{color:var(--ink)}
-button.tog.off{color:var(--acc);border-color:var(--acc)}
-body.nobinder #binder{display:none}
-body.nopanel #panel{display:none}
-@media(max-width:1100px){main{grid-template-columns:230px minmax(0,1fr) 290px}body:not([data-view=ms]) main{grid-template-columns:230px minmax(0,1fr)}}
+/* nav bar: hide binder / notes, previous and next chapter */
+.navb{display:flex;align-items:center;gap:2px}
+.navb button{border:0;background:none;width:36px;min-height:36px;padding:0;display:grid;place-items:center;border-radius:8px;color:var(--mut)}
+.navb button:hover:not(:disabled){background:var(--accs);color:var(--ink)}
+.navb button[aria-pressed=true]{color:var(--ink)}
+.navb button:disabled{opacity:.35;cursor:default}
+.navb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media(min-width:901px){
+body.hb main{--bw:0px}
+body.hp main{--pw:0px}
+body.hb #binder,body.hp #panel{visibility:hidden;padding:0;border:0;overflow:hidden}
+}
+@media(max-width:1100px){main{--bw:230px;--pw:290px}}
 @media(max-width:900px){
 .mob{display:inline-block}
 main,body:not([data-view=ms]) main{grid-template-columns:minmax(0,1fr)}
