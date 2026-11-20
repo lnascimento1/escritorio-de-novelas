@@ -11,10 +11,10 @@
 <body data-view="ms">
 <div class="app">
 <header>
+  <button class="tog" id="bIdx" title="Mostrar u ocultar el índice (Ctrl+\)" aria-label="Mostrar u ocultar el índice"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></button>
   <button id="bLib" title="Tus novelas y cuentos">Biblioteca</button>
   <input id="ptitle" aria-label="Título del proyecto">
   <div class="seg" id="views"><button data-v="ms" class="on">Manuscrito</button><button data-v="board">Tablero</button><button data-v="cards">Fichas</button><button data-v="map">Mapa</button><button data-v="time">Línea de tiempo</button></div>
-  <button class="mob" id="bIdx">Índice</button>
   <button class="today" id="bGoals" title="Metas: palabras de hoy"><span id="tNum">0 / 1.000</span><span class="tbar"><i id="tBar"></i></span></button>
   <span class="stat" id="saveSt">Cargando…</span>
   <span id="busy" class="busy" hidden><i class="spin"></i><span id="busyT"></span></span>
@@ -23,7 +23,7 @@
   <button id="bFocus">Foco</button>
   <button id="bSave" class="pri" title="Guardar (Ctrl+S)">Guardar</button>
   <button id="bExp">Exportar</button>
-  <button class="mob" id="bNotes">Notas</button>
+  <button class="tog" id="bNotes" title="Mostrar u ocultar el panel de la derecha" aria-label="Mostrar u ocultar el panel"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg></button>
 </header>
 <main>
   <nav id="binder" aria-label="Capítulos y escenas"></nav>

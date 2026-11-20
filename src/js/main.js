@@ -1,7 +1,7 @@
 'use strict';
 /* ---------- views ---------- */
 function setView(v){
-  document.body.dataset.view=v;$$('#views button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));document.body.classList.remove('sp');
+  document.body.dataset.view=v;layout();$$('#views button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));document.body.classList.remove('sp');
   if(v==='map'){renderMapUI(!mapSeen);mapSeen=true}else if(v==='cards')renderCM();else if(v==='board')renderBoard();else if(v==='time')renderTL();else renderEditor();
 }
 $('#views').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setView(b.dataset.v)});
@@ -16,14 +16,23 @@ new MutationObserver(()=>{const v=document.documentElement.getAttribute('data-th
 $('#bTheme').onclick=()=>{themePref={auto:'dark',dark:'light',light:'auto'}[themePref];try{localStorage.setItem('en-theme',themePref)}catch(e){}L.theme=themePref;dirtyLib=true;touch();applyTheme()};
 $('#bGoals').onclick=()=>{renderGoals();$('#dGoals').showModal()};
 $('#goalsClose').onclick=()=>$('#dGoals').close();
-$('#bIdx').onclick=()=>document.body.classList.toggle('sb');
-$('#bNotes').onclick=()=>{if(!isView('ms'))setView('ms');document.body.classList.toggle('sp')};
+/* show/hide the chapter list and the right panel; on phones they open as drawers */
+let LAY={nobinder:false,nopanel:false};try{Object.assign(LAY,JSON.parse(localStorage.getItem('en-layout')||'{}'))}catch(e){}
+function layout(){const wide=innerWidth>900,b=document.body;b.classList.toggle('nobinder',wide&&LAY.nobinder);b.classList.toggle('nopanel',wide&&LAY.nopanel);
+  const cols=[];if(!(wide&&LAY.nobinder))cols.push(innerWidth<=1100?'230px':'260px');cols.push('minmax(0,1fr)');if(isView('ms')&&!(wide&&LAY.nopanel))cols.push(innerWidth<=1100?'290px':'330px');
+  $('main').style.gridTemplateColumns=wide?cols.join(' '):'';$('#bIdx').classList.toggle('off',wide&&LAY.nobinder);$('#bNotes').classList.toggle('off',wide&&LAY.nopanel);
+  if(isView('map'))drawMap();if(isView('cards'))drawCM();if(isView('time'))drawTL()}
+const saveLay=()=>{try{localStorage.setItem('en-layout',JSON.stringify(LAY))}catch(e){}};
+$('#bIdx').onclick=()=>{if(innerWidth<=900){document.body.classList.toggle('sb');return}LAY.nobinder=!LAY.nobinder;saveLay();layout()};
+$('#bNotes').onclick=()=>{if(!isView('ms'))setView('ms');if(innerWidth<=900){document.body.classList.toggle('sp');return}if(LAY.nopanel){LAY.nopanel=false}else LAY.nopanel=true;saveLay();layout()};
+addEventListener('resize',layout);
 $('#closeP').onclick=()=>document.body.classList.remove('sp');
 document.addEventListener('click',e=>{if(innerWidth<=900&&(document.body.classList.contains('sb')||document.body.classList.contains('sp'))&&!e.target.closest('#binder,#panel,#bIdx,#bNotes,dialog'))document.body.classList.remove('sb','sp')});
 document.addEventListener('keydown',e=>{
   const mod=e.ctrlKey||e.metaKey,k=e.key.toLowerCase();
   if(e.key==='Escape'&&document.body.classList.contains('focus')){focusOn(false);return}
   if(mod&&k==='s'){e.preventDefault();saveNow();return}
+  if(mod&&e.key==='\\'){e.preventDefault();$('#bIdx').click();return}
   if(mod&&e.shiftKey&&k==='f'){e.preventDefault();setView('ms');focusOn(!document.body.classList.contains('focus'));return}
   if(mod&&!e.shiftKey&&k==='f'&&!isView('map')){e.preventDefault();if(!isView('ms'))setView('ms');setTab('bus');if(innerWidth<=900)document.body.classList.add('sp');const s=getSelection();if(selInEd()&&String(s).trim()&&String(s).length<60)$('#sq').value=String(s).trim();$('#sq').focus();$('#sq').select();renderSearch()}
 });

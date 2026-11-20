@@ -269,6 +269,11 @@ body.focus #fbar [data-fcmd].on{background:var(--ink);color:var(--bg)}
 @media(prefers-reduced-motion:reduce){.pom.ding{animation:none;background:var(--accs)}}
 @media(max-width:600px){.page{padding:32px 20px 80px;border-radius:0;box-shadow:none}#sheet{padding:0 0 100px}}
 
+button.tog{min-width:40px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center;color:var(--mut)}
+button.tog:hover{color:var(--ink)}
+button.tog.off{color:var(--acc);border-color:var(--acc)}
+body.nobinder #binder{display:none}
+body.nopanel #panel{display:none}
 @media(max-width:1100px){main{grid-template-columns:230px minmax(0,1fr) 290px}body:not([data-view=ms]) main{grid-template-columns:230px minmax(0,1fr)}}
 @media(max-width:900px){
 .mob{display:inline-block}
