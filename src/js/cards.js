@@ -165,7 +165,7 @@ ${txt.slice(0,150000)}`);
     const have=new Set(P.cards.map(c=>(c.name||'').toLowerCase()));cAISugg=(Array.isArray(r)?r:[]).filter(o=>o&&o.name&&!have.has(String(o.name).toLowerCase())).map(o=>({name:String(o.name),kind:String(o.kind||'personaje'),alias:String(o.alias||''),role:String(o.role||''),notes:String(o.notes||'')}));
     cSel=cRel=null;renderCInsp();$('#ciMsg').textContent=cAISugg.length?'Claude encontró '+cAISugg.length+'. Creá las que quieras.':'Claude no encontró nada nuevo.';
   }catch(err){renderCInsp();$('#ciMsg').textContent=aiErr(err)}});
-document.addEventListener('keydown',e=>{if(!isView('cards')||e.target.closest('input,textarea,select,dialog,button'))return;
+document.addEventListener('keydown',e=>{if(!isView('cards')||(e.target.closest&&e.target.closest('input,textarea,select,dialog,button')))return;
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();cUndoDo();return}
   if((e.key==='Delete'||e.key==='Backspace')&&(cSel||cRel)){e.preventDefault();cSnap();if(cSel){const id=cSel;P.cards=P.cards.filter(c=>c.id!==id);P.rels=P.rels.filter(r=>r.a!==id&&r.b!==id);appearMemo=null}else P.rels=P.rels.filter(r=>r.id!==cRel);cSel=cRel=null;touch();drawCM();renderCInsp();renderCards()}
   else if(e.key==='Escape'){cSel=cRel=cPend=null;renderCInsp();drawCM()}});

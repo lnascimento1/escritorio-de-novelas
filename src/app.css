@@ -324,3 +324,10 @@ button.today:hover{border-color:var(--acc)}
 .sg .acts2{display:flex;gap:4px;flex-wrap:wrap}
 .sg .acts2 button{min-height:30px;padding:2px 10px;font-size:12px;border-radius:15px}
 .stat2{font-size:13px;color:var(--mut);margin:8px 0}
+
+.sep2{width:1px;height:26px;background:var(--line);margin:0 2px}
+.mk{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-1px}
+.mk-p{border-radius:50%;background:#FAECE7;border:2px solid #D85A30}
+.mk-l{border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#E1F5EE;border:2px solid #1D9E75}
+.mk-o{transform:rotate(45deg) scale(.85);background:#EEEDFE;border:2px solid #7F77DD}
+#msvg [data-tl]{cursor:move}#msvg [data-tb]{cursor:ew-resize}#msvg [data-ft]{cursor:move}#msvg [data-fc]{cursor:nwse-resize}#msvg [data-tlh]{cursor:col-resize}

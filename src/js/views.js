@@ -147,7 +147,7 @@ $('#tLine').onclick=()=>{mSelS=mSelL=null;renderTInsp();drawTL();const s=$('#mAd
 $('#tBook').onclick=e=>confirm2(e.currentTarget,()=>{mSnap2();const M=metro(),ev=M.order.filter(i=>i.startsWith('e:'));M.order=allScenes().map(x=>'s:'+x.s.id);ev.forEach(i=>M.order.unshift(i));touch();fitTL()},'Confirmar');
 $('#tUndo').onclick=mUndoDo2;
 $('#tOrder').addEventListener('change',e=>{metro().showBack=e.target.checked;touch();drawTL()});
-document.addEventListener('keydown',e=>{if(!isView('time')||e.target.closest('input,textarea,select,dialog,button'))return;
+document.addEventListener('keydown',e=>{if(!isView('time')||(e.target.closest&&e.target.closest('input,textarea,select,dialog,button')))return;
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();mUndoDo2();return}
   if(mSelS&&(e.key==='ArrowLeft'||e.key==='ArrowRight')){e.preventDefault();mSnap2();const M=metro(),i=M.order.indexOf(mSelS),j=i+(e.key==='ArrowLeft'?-1:1);if(j>=0&&j<M.order.length){M.order.splice(i,1);M.order.splice(j,0,mSelS);touch();drawTL()}}
   else if((e.key==='Delete'||e.key==='Backspace')&&mSelS&&mSelS.startsWith('e:')){e.preventDefault();mSnap2();const M=metro();M.order=M.order.filter(i=>i!==mSelS);delete M.st[mSelS];mSelS=null;touch();drawTL();renderTInsp()}
